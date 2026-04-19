@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Search</h2>
+    <form method="get" action="{{ url_for('search_page') }}">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search terms" required style="width: 45%;" />
+        <input type="number" name="limit" value="{{ limit }}" min="1" />
+        <input type="number" name="job_id" value="{{ job_id }}" min="1" placeholder="Optional job ID" />
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Results</h2>
+    {% if query and not results %}
+        <p>No results found.</p>
+    {% elif results %}
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Relevant URL</th>
+                <th>Origin URL</th>
+                <th>Depth</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for result in results %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td class="mono">{{ result.relevant_url }}</td>
+                <td class="mono">{{ result.origin_url }}</td>
+                <td>{{ result.depth }}</td>
+                <td>{{ result.score }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>Enter a query to search indexed pages.</p>
+    {% endif %}
+</div>
+{% endblock %}

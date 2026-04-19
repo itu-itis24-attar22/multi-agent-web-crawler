@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Start Indexing</h2>
+    <form method="post" action="{{ url_for('start_index') }}">
+        <input type="text" name="origin_url" placeholder="https://example.com" required style="width: 60%;" />
+        <input type="number" name="max_depth" value="1" min="0" required />
+        <button type="submit">Start</button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Jobs</h2>
+    {% if not jobs %}
+        <p>No jobs yet.</p>
+    {% else %}
+    <table>
+        <thead>
+            <tr>
+                <th>Job ID</th>
+                <th>Origin</th>
+                <th>Status</th>
+                <th>Depth</th>
+                <th>Discovered</th>
+                <th>Crawled</th>
+                <th>Indexed</th>
+                <th>Failed</th>
+                <th>Runtime</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for job in jobs %}
+            <tr>
+                <td><a href="{{ url_for('job_detail', job_id=job.job_id) }}">{{ job.job_id }}</a></td>
+                <td class="mono">{{ job.origin_url }}</td>
+                <td>{{ job.status }}</td>
+                <td>{{ job.max_depth }}</td>
+                <td>{{ job.pages_discovered }}</td>
+                <td>{{ job.pages_crawled }}</td>
+                <td>{{ job.pages_indexed }}</td>
+                <td>{{ job.pages_failed }}</td>
+                <td>
+                    {% if runtime[job.job_id] %}
+                        queue={{ runtime[job.job_id].frontier_size }}/{{ runtime[job.job_id].frontier_maxsize }},
+                        workers={{ runtime[job.job_id].active_workers }},
+                        pressure={{ runtime[job.job_id].pressure_state }}
+                        {% if running[job.job_id] %}
+                            <span class="badge warn">running</span>
+                        {% else %}
+                            <span class="badge ok">idle</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="badge">n/a</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>Recent Agent Decisions</h2>
+    {% if not recent_decisions %}
+        <p>No agent decisions recorded yet.</p>
+    {% else %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Agent</th>
+                <th>Stage</th>
+                <th>Job</th>
+                <th>Decision</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in recent_decisions %}
+            <tr>
+                <td>{{ item.decision_id }}</td>
+                <td>{{ item.agent_name }}</td>
+                <td>{{ item.stage }}</td>
+                <td>{{ item.job_id }}</td>
+                <td>{{ item.decision_text }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+{% endblock %}

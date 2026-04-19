@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% if running %}
+    {% set refresh = 2 %}
+{% endif %}
+
+{% block content %}
+<div class="card">
+    <h2>Job {{ job.job_id }}</h2>
+    <p><strong>Origin:</strong> <span class="mono">{{ job.origin_url }}</span></p>
+    <p><strong>Max depth:</strong> {{ job.max_depth }}</p>
+    <p><strong>Status:</strong> {{ job.status }}</p>
+    <p><strong>Created:</strong> {{ job.created_at }}</p>
+    <p><strong>Started:</strong> {{ job.started_at }}</p>
+    <p><strong>Completed:</strong> {{ job.completed_at }}</p>
+    <p><strong>Discovered:</strong> {{ job.pages_discovered }}</p>
+    <p><strong>Crawled:</strong> {{ job.pages_crawled }}</p>
+    <p><strong>Indexed:</strong> {{ job.pages_indexed }}</p>
+    <p><strong>Failed:</strong> {{ job.pages_failed }}</p>
+</div>
+
+<div class="card">
+    <h2>Runtime Status</h2>
+    {% if runtime %}
+        <p><strong>Frontier size:</strong> {{ runtime.frontier_size }}/{{ runtime.frontier_maxsize }}</p>
+        <p><strong>Active workers:</strong> {{ runtime.active_workers }}</p>
+        <p><strong>Total enqueued:</strong> {{ runtime.total_enqueued }}</p>
+        <p><strong>Total dequeued:</strong> {{ runtime.total_dequeued }}</p>
+        <p><strong>Back pressure events:</strong> {{ runtime.back_pressure_events }}</p>
+        <p><strong>Pressure state:</strong> {{ runtime.pressure_state }}</p>
+        {% if running %}
+            <span class="badge warn">Job still running</span>
+        {% else %}
+            <span class="badge ok">Job not running</span>
+        {% endif %}
+    {% else %}
+        <p>No runtime information available.</p>
+    {% endif %}
+    {% if error %}
+        <p><strong>Error:</strong> {{ error }}</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>Pages</h2>
+    {% if not pages %}
+        <p>No pages stored yet.</p>
+    {% else %}
+    <table>
+        <thead>
+            <tr>
+                <th>Page ID</th>
+                <th>URL</th>
+                <th>Depth</th>
+                <th>Status</th>
+                <th>HTTP</th>
+                <th>Title</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for page in pages %}
+            <tr>
+                <td>{{ page.page_id }}</td>
+                <td class="mono">{{ page.page_url }}</td>
+                <td>{{ page.depth }}</td>
+                <td>{{ page.status }}</td>
+                <td>{{ page.http_status }}</td>
+                <td>{{ page.title }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>Agent Decisions</h2>
+    {% if not decisions %}
+        <p>No agent decisions recorded for this job.</p>
+    {% else %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Agent</th>
+                <th>Stage</th>
+                <th>Time</th>
+                <th>Decision</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in decisions %}
+            <tr>
+                <td>{{ item.decision_id }}</td>
+                <td>{{ item.agent_name }}</td>
+                <td>{{ item.stage }}</td>
+                <td>{{ item.created_at }}</td>
+                <td>{{ item.decision_text }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+{% endblock %}

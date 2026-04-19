@@ -1,0 +1,5 @@
+# Recommendation for Production Deployment
+
+The current implementation is appropriate for the assignment because it is a single-machine crawler and search engine using SQLite, in-process workers, and a lightweight UI. For production deployment, the first recommended improvement is to separate crawling from the UI and CLI into a persistent worker service. This would allow indexing jobs to continue independently of the user interface and would make job management more robust.
+
+The second recommendation is to replace or extend SQLite with a more scalable storage layer such as PostgreSQL for metadata and a dedicated search engine for retrieval. The ranking model should also be upgraded from simple term frequency to a stronger method such as TF-IDF or BM25. In addition, retry logic, resumability, API-based access, and stronger URL/content deduplication should be added to improve reliability and scale.

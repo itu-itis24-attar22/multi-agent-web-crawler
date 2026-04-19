@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+data/crawler.db
+data/crawler.db-journal
+.vscode/
+.DS_Store
+Thumbs.db
